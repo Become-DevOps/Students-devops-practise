@@ -1,0 +1,77 @@
+cd or cd~              - login inside  user from where you have to create directory                - 
+cd / or cd ../ or cd ../.. - to root directories
+
+
+User
+
+switch to root         - sudo -i
+switch to regular user - su username
+create user            - adduser username 
+                       - useradd username  ( then set passwd using) sudo passwd username
+                       - useradd -m -s /bin/bash username
+					   
+listing user           - cat /etc/passwd
+                       - getent passwd
+					   
+find root user         - head -1 /etc/passwd
+created user           - tail -5 /etc/passwd 
+delete user            - userdel username
+delete user with home  - userdel -r username
+view user details      - id username
+to make user sudoers   - visudo (from root)
+
+Group
+
+create group           - groupadd groupname
+list group             - cat /etc/group,  getent group, head -1 /etc/group ,tail -5 /etc/group
+delete group           - groupdel groupname
+
+add user to grp        - usermod -aG groupname username
+delete user from grp    - gpasswd -d username groupname 
+list specific group    - grep groupname /etc/group
+check group            -getent group <groupname>
+
+
+File permisssion
+
+check default directory permisssion  - sudo ls -ld /usernam( to check the permission of directory
+                                                            thats created when creating user)
+check file permisssion    - ls -l
+change owner of file      - sudo chown username filename ( give new username)
+change group ownership    - sudo chgrp devops /home/aws/f1.txt
+                            (using above comment change the group ownership so all the users in that 
+                             group can access the specific file)	
+
+                             
+
+to set different permission - setfacl( set file access control) and getfacl( get file acl) are commands used to manage and view Access Control Lists (ACLs) so first 
+of same file to different
+group
+
+install ACL                - sudo apt-get install acl
+
+give permission           - setfacl -m u:username:permissions filename    eg ..setfacl -m g:morning_batch:r-- calculator.txt   ( -m means modify)
+
+to check permission     - getfacl calculator.txt 
+	
+
+					
+File compression:
+
+calculator.txt
+
+tar compress ----   tar cf name.tar files
+                    tar cf calculator.tar   calculator.txt file1.txt
+extract tar  ----   tar -xf name.tar
+                    tar -xf calculator.tar
+
+To Create zip files  ----  zip name.zip files
+To extract zip files ----  unzip name.zip
+
+To create gz file    ----  gzip filename  (gzip zipfile.zip (this gives a file zipfile.zip.gz))
+To extract gz file   ----  gzip -d filename
+
+ 
+upload vdo and img
+
+

@@ -1,0 +1,311 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\colortbl ;\red255\green255\blue0;\red255\green0\blue0;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\highlight1\f0\fs32\lang9\tab  Kubernetes 1.30.2 Cluster Setup on Ubuntu 22.04 LTS\highlight0\fs22\par
+\par
+\highlight1\b\fs32 **  Prerequisites\highlight0\b0\fs22\par
+- Ubuntu 22.04 LTS installed on all nodes.\par
+- ubuntu instance should be created using 2 or more vpcu \par
+- Access to the internet.\par
+- User with `sudo` privileges.\par
+\highlight1\fs32 1. Step-by-Step Installation\highlight0\fs22\par
+\cf2\b\fs28 Step 1: Disable Swap :  On all 3 Instances together\cf0\b0\par
+swapoff -a\par
+sed -i '/ swap / s/^\\(.*\\)$/#\\1/g' /etc/fstab\par
+\cf2\b Step 2: Enable IPv4 Packet Forwarding:  On all 3 Instances together\cf0\b0\par
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf\par
+net.ipv4.ip_forward = 1\par
+EOF\fs22\par
+\cf2\b\fs28 On all 3 Instances together\cf0\b0\par
+sudo sysctl --system\par
+\cf2\b  Step 3: Verify IPv4 Packet Forwarding  :On all 3 Instances together\cf0\b0\par
+sysctl net.ipv4.ip_forward\par
+\cf2\b Step 4: Install containerd : On all 3 Instances together\cf0\b0\par
+# Add Docker's official GPG key:\par
+sudo apt-get update\par
+sudo apt-get install ca-certificates curl\par
+sudo install -m 0755 -d /etc/apt/keyrings\par
+sudo curl -fsSL {{\field{\*\fldinst{HYPERLINK https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc }}{\fldrslt{https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc\ul0\cf0}}}}\f0\fs28\par
+sudo chmod a+r /etc/apt/keyrings/docker.asc\par
+echo \\\par
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] {{\field{\*\fldinst{HYPERLINK https://download.docker.com/linux/ubuntu }}{\fldrslt{https://download.docker.com/linux/ubuntu\ul0\cf0}}}}\f0\fs28  \\\par
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \\\par
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null\par
+sudo apt-get update && sudo apt-get install containerd.io && systemctl enable --now containerd\par
+\cf2\b Step 5: Install CNI Plugin : On all 3 instances together\cf0\b0\fs22\par
+\fs28 wget {{\field{\*\fldinst{HYPERLINK https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz }}{\fldrslt{https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz\ul0\cf0}}}}\f0\fs28\par
+mkdir -p /opt/cni/bin\par
+tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.4.0.tgz\par
+\cf2\b  Step 6: Forward IPv4 and Configure iptables : On all 3 instances together\cf0\b0\par
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf\par
+overlay\par
+br_netfilter\par
+EOF\par
+sudo modprobe overlay\par
+sudo modprobe br_netfilter\par
+\par
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf\par
+net.bridge.bridge-nf-call-iptables = 1\par
+net.bridge.bridge-nf-call-ip6tables = 1\par
+net.ipv4.ip_forward = 1\par
+EOF\par
+\par
+sudo sysctl --system\par
+sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward\par
+modprobe br_netfilter\par
+sysctl -p /etc/sysctl.conf\par
+\cf2\b Step 7:  DIsconnect from multi execution mode and execute it in all 3 instances one by one\cf0\b0\par
+sudo nano /etc/containerd/config.toml\par
+\cf2\b Delete the content in that file and Paste this configuration in the file and save it.\cf0\b0\par
+disabled_plugins = []\par
+imports = []\par
+oom_score = 0\par
+plugin_dir = ""\par
+required_plugins = []\par
+root = "/var/lib/containerd"\par
+state = "/run/containerd"\par
+version = 2\par
+\par
+[cgroup]\par
+  path = ""\par
+\par
+[debug]\par
+  address = ""\par
+  format = ""\par
+  gid = 0\par
+  level = ""\par
+  uid = 0\par
+\par
+[grpc]\par
+  address = "/run/containerd/containerd.sock"\par
+  gid = 0\par
+  max_recv_message_size = 16777216\par
+  max_send_message_size = 16777216\par
+  tcp_address = ""\par
+  tcp_tls_cert = ""\par
+  tcp_tls_key = ""\par
+  uid = 0\par
+\par
+[metrics]\par
+  address = ""\par
+  grpc_histogram = false\par
+\par
+[plugins]\par
+\par
+  [plugins."io.containerd.gc.v1.scheduler"]\par
+    deletion_threshold = 0\par
+    mutation_threshold = 100\par
+    pause_threshold = 0.02\par
+    schedule_delay = "0s"\par
+    startup_delay = "100ms"\par
+\par
+  [plugins."io.containerd.grpc.v1.cri"]\par
+    disable_apparmor = false\par
+    disable_cgroup = false\par
+    disable_hugetlb_controller = true\par
+    disable_proc_mount = false\par
+    disable_tcp_service = true\par
+    enable_selinux = false\par
+    enable_tls_streaming = false\par
+    ignore_image_defined_volumes = false\par
+    max_concurrent_downloads = 3\par
+    max_container_log_line_size = 16384\par
+    netns_mounts_under_state_dir = false\par
+    restrict_oom_score_adj = false\par
+    sandbox_image = "k8s.gcr.io/pause:3.5"\par
+    selinux_category_range = 1024\par
+    stats_collect_period = 10\par
+    stream_idle_timeout = "4h0m0s"\par
+    stream_server_address = "127.0.0.1"\par
+    stream_server_port = "0"\par
+    systemd_cgroup = false\par
+    tolerate_missing_hugetlb_controller = true\par
+    unset_seccomp_profile = ""\par
+\par
+    [plugins."io.containerd.grpc.v1.cri".cni]\par
+      bin_dir = "/opt/cni/bin"\par
+      conf_dir = "/etc/cni/net.d"\par
+      conf_template = ""\par
+      max_conf_num = 1\par
+\par
+    [plugins."io.containerd.grpc.v1.cri".containerd]\par
+      default_runtime_name = "runc"\par
+      disable_snapshot_annotations = true\par
+      discard_unpacked_layers = false\par
+      no_pivot = false\par
+      snapshotter = "overlayfs"\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime]\par
+        base_runtime_spec = ""\par
+        container_annotations = []\par
+        pod_annotations = []\par
+        privileged_without_host_devices = false\par
+        runtime_engine = ""\par
+        runtime_root = ""\par
+        runtime_type = ""\par
+\par
+        [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime.options]\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]\par
+\par
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]\par
+          base_runtime_spec = ""\par
+          container_annotations = []\par
+          pod_annotations = []\par
+          privileged_without_host_devices = false\par
+          runtime_engine = ""\par
+          runtime_root = ""\par
+          runtime_type = "io.containerd.runc.v2"\par
+\par
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]\par
+            BinaryName = ""\par
+            CriuImagePath = ""\par
+            CriuPath = ""\par
+            CriuWorkPath = ""\par
+            IoGid = 0\par
+            IoUid = 0\par
+            NoNewKeyring = false\par
+            NoPivotRoot = false\par
+            Root = ""\par
+            ShimCgroup = ""\par
+            SystemdCgroup = true\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime]\par
+        base_runtime_spec = ""\par
+        container_annotations = []\par
+        pod_annotations = []\par
+        privileged_without_host_devices = false\par
+        runtime_engine = ""\par
+        runtime_root = ""\par
+        runtime_type = ""\par
+\par
+        [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime.options]\par
+\par
+    [plugins."io.containerd.grpc.v1.cri".image_decryption]\par
+      key_model = "node"\par
+\par
+    [plugins."io.containerd.grpc.v1.cri".registry]\par
+      config_path = ""\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".registry.auths]\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".registry.headers]\par
+\par
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]\par
+\par
+    [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]\par
+      tls_cert_file = ""\par
+      tls_key_file = ""\par
+\par
+  [plugins."io.containerd.internal.v1.opt"]\par
+    path = "/opt/containerd"\par
+\par
+  [plugins."io.containerd.internal.v1.restart"]\par
+    interval = "10s"\par
+\par
+  [plugins."io.containerd.metadata.v1.bolt"]\par
+    content_sharing_policy = "shared"\par
+\par
+  [plugins."io.containerd.monitor.v1.cgroups"]\par
+    no_prometheus = false\par
+\par
+  [plugins."io.containerd.runtime.v1.linux"]\par
+    no_shim = false\par
+    runtime = "runc"\par
+    runtime_root = ""\par
+    shim = "containerd-shim"\par
+    shim_debug = false\par
+\par
+  [plugins."io.containerd.runtime.v2.task"]\par
+    platforms = ["linux/amd64"]\par
+\par
+  [plugins."io.containerd.service.v1.diff-service"]\par
+    default = ["walking"]\par
+\par
+  [plugins."io.containerd.snapshotter.v1.aufs"]\par
+    root_path = ""\par
+\par
+  [plugins."io.containerd.snapshotter.v1.btrfs"]\par
+    root_path = ""\par
+\par
+  [plugins."io.containerd.snapshotter.v1.devmapper"]\par
+    async_remove = false\par
+    base_image_size = ""\par
+    pool_name = ""\par
+    root_path = ""\par
+\par
+  [plugins."io.containerd.snapshotter.v1.native"]\par
+    root_path = ""\par
+\par
+  [plugins."io.containerd.snapshotter.v1.overlayfs"]\par
+    root_path = ""\par
+\par
+  [plugins."io.containerd.snapshotter.v1.zfs"]\par
+    root_path = ""\par
+\par
+[proxy_plugins]\par
+\par
+[stream_processors]\par
+\par
+  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar"]\par
+    accepts = ["application/vnd.oci.image.layer.v1.tar+encrypted"]\par
+    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]\par
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]\par
+    path = "ctd-decoder"\par
+    returns = "application/vnd.oci.image.layer.v1.tar"\par
+\par
+  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar.gzip"]\par
+    accepts = ["application/vnd.oci.image.layer.v1.tar+gzip+encrypted"]\par
+    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]\par
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]\par
+    path = "ctd-decoder"\par
+    returns = "application/vnd.oci.image.layer.v1.tar+gzip"\par
+\par
+[timeouts]\par
+  "io.containerd.timeout.shim.cleanup" = "5s"\par
+  "io.containerd.timeout.shim.load" = "5s"\par
+  "io.containerd.timeout.shim.shutdown" = "3s"\par
+  "io.containerd.timeout.task.state" = "2s"\par
+\par
+[ttrpc]\par
+  address = ""\par
+  gid = 0\par
+  uid = 0\par
+\cf2\b Step 8: For all 3 instance together\cf0\b0\par
+sudo systemctl restart containerd && systemctl status containerd\par
+\cf2\b\fs32 Step 9: Install kubeadm, kubelet, and kubectl , do for all 3 instance \cf0\b0\fs28\par
+sudo apt-get update\par
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg\par
+\par
+sudo mkdir -p -m 755 /etc/apt/keyrings\par
+curl -fsSL {{\field{\*\fldinst{HYPERLINK https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key }}{\fldrslt{https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key\ul0\cf0}}}}\f0\fs28  | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg\par
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] {{\field{\*\fldinst{HYPERLINK https://pkgs.k8s.io/core:/stable:/v1.30/deb/ }}{\fldrslt{https://pkgs.k8s.io/core:/stable:/v1.30/deb/\ul0\cf0}}}}\f0\fs28  /' | sudo tee /etc/apt/sources.list.d/kubernetes.list\par
+\par
+sudo apt-get update -y\par
+sudo apt-get install -y kubelet kubeadm kubectl\par
+sudo apt-mark hold kubelet kubeadm kubectl\par
+\cf2\b Step 10: Execture below in master  only and Copy the join  command but dont paste in worker now\cf0\b0\par
+sudo kubeadm config images pull\par
+sudo kubeadm init\par
+\cf2\b Execute this only in master after above command :\cf0\b0\fs22\par
+\fs28 #To start using your cluster, you need to run the following as a regular user:\par
+mkdir -p $HOME/.kube\par
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config\par
+sudo chown $(id -u):$(id -g) $HOME/.kube/config\par
+#Alternatively, if you are the root user, you can run:\par
+export KUBECONFIG=/etc/kubernetes/admin.conf\par
+\par
+#Apply the CNI YAML\par
+kubectl apply -f {{\field{\*\fldinst{HYPERLINK https://reweave.azurewebsites.net/k8s/v1.30/net.yaml }}{\fldrslt{https://reweave.azurewebsites.net/k8s/v1.30/net.yaml\ul0\cf0}}}}\f0\fs28\par
+\cf2\b Step 11: Join Worker Nodes to the Cluster by pasting the token copied before in worker nodes only  : and below  given token is just a sample , dont paste it \par
+\cf0\b0\fs22 kubeadm join 192.168.122.100:6443 --token zcijug.ye3vrct74itrkesp \\\par
+        --discovery-token-ca-cert-hash sha256:e9dd1a0638a5a1aa1850c16f4c9eeaa2e58d03f97fd0403f587c69502570c9cd\par
+\cf2\b\fs28 Step 12 : Only in master node\cf0\b0\fs22\par
+\fs28 kubectl get nodes\par
+\fs22  [ if u see the nodes connected then its success]\par
+\par
+\par
+}
+ 

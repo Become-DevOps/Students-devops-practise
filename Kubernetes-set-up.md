@@ -352,5 +352,7 @@ kubectl apply -f https://reweave.azurewebsites.net/k8s/v1.30/net.yaml
 kubeadm join 192.168.122.100:6443 --token zcijug.ye3vrct74itrkesp \
         --discovery-token-ca-cert-hash sha256:e9dd1a0638a5a1aa1850c16f4c9eeaa2e58d03f97fd0403f587c69502570c9cd
 ```
+### STEP 12 : Add calico command to make the node status ready  , only in master
 
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 

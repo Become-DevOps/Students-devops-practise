@@ -359,6 +359,7 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ### STEP 13: Add the following commands in yaml file and save it , do in all instances
 
 sudo nano /etc/crictl.yaml
+
 runtime-endpoint: unix:///run/containerd/containerd.sock
 
 ### STEP 14: Step 4: Verify the Configuration

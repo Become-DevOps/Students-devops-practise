@@ -356,7 +356,7 @@ kubeadm join 192.168.122.100:6443 --token zcijug.ye3vrct74itrkesp \
 
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
-### STEP 13: Add the following commands in yaml file and save it , do in all instances
+### STEP 13: Add the following commands in yaml file and save it , do master node only
 
 sudo nano /etc/crictl.yaml
 
@@ -364,6 +364,9 @@ runtime-endpoint: unix:///run/containerd/containerd.sock
 
 ### STEP 14: Step 4: Verify the Configuration
 crictl info
-### STEP 15: check for nodes
+### STEP 15: Restart the kubelet in all nodes 
+sudo systemctl restart kubelet
+###  STEP 16: Check for node status in master
 kubectl get nodes 
+
 kubectl cluster-info

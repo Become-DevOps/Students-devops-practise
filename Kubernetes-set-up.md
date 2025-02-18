@@ -371,14 +371,5 @@ kubectl get nodes
 
 kubectl cluster-info
 
-### STEP 16: 1. Download and Install Minikube  , only in master
-sudo apt update
 
-sudo apt install -y curl
-
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-minikube version
 

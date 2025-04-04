@@ -1,0 +1,586 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang16393\deflangfe16393{\fonttbl{\f0\fmodern\fprq1\fcharset0 Courier New;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red255\green255\blue0;\red0\green255\blue0;\red255\green0\blue0;\red0\green0\blue0;\red46\green116\blue181;\red91\green155\blue213;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.22621}{\*\mmathPr\mdispDef1\mwrapIndent1440 }\viewkind4\uc1 
+\pard\nowidctlpar\f0\fs28                \highlight1\b Shell Scripting \highlight0\b0\par
+\par
+\highlight2\b What is a shell ?\highlight0\b0\par
+\par
+     To understand what is shell lets recall the architecture of linux . i.e \cf1\par
+      \cf3\par
+       user \par
+        |\par
+        |\par
+      shell\par
+        |\par
+        |\par
+      Kernal\par
+        |\par
+        |\par
+     Hardware\par
+\cf0\par
+\par
+Here shell acts as interface between kernal  and user \par
+\par
+\highlight2\b So what is kernal ? \highlight0\b0\par
+\par
+   It is  a special type of program that serves as the core of an operating system that manages system resources and allows software to communicate with hardware.. \par
+\par
+\cf3\b Resource Management: \cf0\b0 The kernel allocates resources such as CPU time, memory, and I/O devices to various processes, ensuring efficient usage.\par
+\par
+\cf3\b Process Management: \cf0\b0 It handles the creation, scheduling, and termination of processes. The kernel manages multitasking by switching between processes and ensuring they operate smoothly.\par
+\par
+\cf3\b Memory Management: \cf0\b0 The kernel manages the system\rquote s memory, including allocation and deallocation for processes.\par
+\par
+\cf3\b Device managemant: \cf0\b0 Device drivers are programs within the kernel that help the operating system communicate with hardware like disks, keyboards, and network cards. They act as intermediaries, allowing the OS to interact with different hardware in a consistent way, without needing to know the details of each device.\par
+\par
+\cf3\b File System Management: \cf0\b0 It manages file systems, providing a way to store and retrieve files on storage devices. \par
+\par
+\par
+  -> So kernel is the core part of an operating system. It acts as a bridge between the hardware and software, managing things like memory, processes, and device communication. Essentially, it helps programs run and makes sure they can use system resources effectively.\par
+\par
+\par
+\highlight2\b who is user ?\highlight0\b0\par
+    The one who uses the application is the user\par
+\par
+\highlight2\b How does shell work as interpreter in between them ?\par
+\highlight0\b0\par
+   The shell works as an interpreter between the user and the operating system by:\par
+\par
+\cf3\b Taking Input: \cf0\b0 Users type commands into the shell.\par
+\par
+\cf3\b Understanding Commands: \cf0\b0 The shell reads and interprets these commands.\par
+\cf3\b\par
+Executing Commands: \cf0\b0 It sends the commands to the operating system to perform the requested actions.\par
+\par
+\cf3\b Displaying Results:\cf0\b0  The shell shows the output or results back to the user.\par
+\par
+  In short, the shell translates user commands into actions that the operating system can perform.\par
+\par
+\par
+  There are several types of shells in Linux and Unix-like operating systems, each with its own features and capabilities. Here are some of the most common ones:\par
+\par
+\highlight2\b Types of shell :\par
+\highlight0\b0\par
+\cf3\b Bash (Bourne Again Shell\cf4\b0 ):( ubuntu ,fedora ,centos)\par
+\cf0     The most widely used shell.\par
+Supports advanced features.\par
+\par
+\cf3\b Sh (Bourne Shell\cf4\b0 ):( various unix)\par
+\cf0   The original Unix shell.\par
+Simpler than Bash and often used for scripting earlier\par
+\par
+\cf3\b Zsh (Z Shell\cf4\b0 ):(Linux distributions, macOS)\cf0\par
+  An extended shell with advanced features like improved globbing, better customization, and themes.\par
+Supports plugins and is highly configurable.\par
+\par
+\cf3\b Ksh (Korn Shell\cf4\b0 ):(AIX, HP-UX, and other Unix systems)\par
+\cf0   Combines features of the Bourne shell and the C shell. Offers advanced scripting capabilities and built-in arithmetic.\par
+\par
+\cf3\b Csh (C Shell\cf4\b0 ):( BSD unix systems)\par
+\cf0   Uses a syntax similar to the C programming language.Includes features like aliases and job control.\par
+\par
+Each shell has its strengths and is suited for different tasks, from interactive use to scripting.\par
+\par
+\par
+\cf4\highlight2\b syntax for bash:\cf3\highlight0\par
+\cf0\b0\par
+ ->  #!/bin/bash \par
+\par
+   The line #!/bin/bash is known as a shebang (or hashbang) and serves an important purpose in script files. \par
+\par
+\highlight2\b Shebang (#!):\b0\par
+\highlight0\par
+   The #! at the beginning indicates that the following path is the interpreter that should be used to execute the script. It tells the system to use the specified interpreter to run the script.\par
+\par
+\highlight2\b Path to the Interpreter:\highlight0\b0\par
+\par
+   /bin/bash is the path to the Bash shell on the system. This means that when you run the script, the system will use the Bash interpreter located at this path to execute the commands within the script.\par
+\par
+\cf4\highlight2\b Script Execution: \cf0\highlight0\b0\par
+   Including the shebang line allows users to execute the script directly from the command line without needing to specify the interpreter explicitly. For example, if you have a script named script.sh, you can run it with:\par
+   ./Script.sh\par
+instead of \par
+   bash script.sh\par
+\par
+\cf4\highlight2\b Consequences of Skipping Shebang\cf3\highlight0\par
+\cf0\b0\par
+ \cf3\b No Default Interpreter: \cf0\b0 Without a shebang, there\rquote s no default interpreter associated with the script when run directly.\par
+\par
+\cf3\b Portability Issues:\cf0\b0  The script may not work as intended across different systems if users expect it to run automatically with a specific interpreter.\par
+\par
+-> If a script skips the shebang (#!), the way the interpreter is determined depends on how the script is executed:\par
+\par
+\cf3\b  Explicit Invocation:\par
+\cf0\b0\par
+  If you run the script by explicitly calling the interpreter (e.g., bash script.sh or sh script.sh), the system will use the specified interpreter, regardless of whether the shebang is present.\par
+Running as an Executable:\par
+\par
+  If you try to run the script directly (e.g., ./script.sh), the system will not know which interpreter to use. In this case, it may throw an error like "Permission denied" or "Command not found" because it cannot find a suitable interpreter.\par
+\par
+\highlight2\b Hands on :\highlight0\b0\par
+\par
+   \cf3\b script 1\cf0\b0  ---> #! /bin/bash\par
+\par
+                 # Author :Sree\par
+                 # Description : learning\par
+                 # Date of creation : xx:mm:yy\par
+                 # Date of Modification : xx:mm:yy\par
+                 ls \par
+                 pwd\par
+                 touch file1 file2\par
+                 echo \ldblquote hello world\rdblquote  \par
+                 cat /etc/shells\par
+                 chmod g+x filename\par
+\par
+\par
+\par
+   \cf3\b script 2\cf0\b0  ---> Comments and variables\par
+\par
+     \cf5\b Comments\cf0\b0  are lines that are not executed by scripts but are useful to know about your scripts . They describe about scripts. Use # in upfront of your sentence so that it becomes comment \par
+     Eg .. \cf3 #\cf0  this is demo comment \par
+      Comment multiple lines\par
+\par
+\tab\tab\cf3 : '\cf0\par
+\tab\tab\tab dfghjkl\par
+\tab\tab\tab fgdhjkl\par
+\tab\tab\tab cfghjk\par
+\tab\tab\tab tfgyuh \cf3 '\cf0\par
+\tab\tab\par
+\par
+    \cf5\b Variable \cf4\b0 are\b  \b0 containers that stores data within it\b . \b0 So whenever you define a variable they store some kind of data it can be a string data , any number etc \'85 In unix type of system there are two types of variables \b  \b0\par
+
+\pard{\pntext\f2\'B7\tab}{\*\pn\pnlvlblt\pnf2\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li1020\cf0  system var \par
+{\pntext\f2\'B7\tab} user defined var\par
+
+\pard\nowidctlpar     system var   -- Created and maintained by OS.\par
+                    Predefined var which are defined by OS\par
+                    Defined in capital case\par
+                    set (command to find  default var)\par
+                    echo $SHELL\par
+                    echo $HOME\par
+                    echo $BASH \par
+                    echo $BASH_VERSION\par
+                    echo $PWD\par
+\par
+    user defined -- Created and maintained by user like us.\par
+                   Can create in lower or capital case \par
+                   Lower case is recommented\par
+                   Cannot start with number\par
+\tab\tab\tab\tab   Only specific special \tab characters are allowed\par
+                   \cf5\b Syntax:\par
+\cf0\b0                     variable_name=value\par
+                    eg \par
+                       name="sree" \par
+                       echo $name\par
+                       echo the name is $name\par
+                       age=1\par
+                       echo $age\par
+\par
+  \cf6\b Read input from user :\par
+     \cf0\b0 To read input from terminal in your script , to get input from keyboard we use read command . The read command takes input from keyboard and assigns it to a variable .\par
+\par
+  Eg . let user enter name \par
+\par
+         #!/bin/bash\par
+         echo \ldblquote  enter name\rdblquote\par
+         read name(the value u write will be stored in name)\par
+         echo \ldblquote  entered name is : $name\rdblquote\par
+\par
+   \tab\cf3\tab echo \ldblquote  enter names\rdblquote\par
+         read name1 name2 name3 \par
+         echo \ldblquote  entered name is : $name , $name2 , $name3\rdblquote\par
+\cf0        \par
+      \par
+      \cf3 echo \ldblquote  enter names\rdblquote  \par
+      read \endash a names ( a= array)\par
+      echo \ldblquote  names entered are : $\{names[0]\}, $\{names[1]\}\rdblquote\par
+\par
+      echo \ldblquote  enter name\rdblquote\par
+      read\par
+      echo \ldblquote  Name : $REPLY\rdblquote  (built in variable)\par
+\cf0  \par
+\cf6\b    \par
+\cf0\b0    ( so take input from user and install some app)\par
+\par
+          \cf3 echo " please ente package for install" \par
+          read package_name\par
+          apt update \par
+          sudo apt install $package_name -y\par
+\cf0\par
+   ( -p prompt plus read together)\par
+\par
+         read -p " enter the package :" package_name\par
+         read -p " enter name :" name \par
+         read -p " enter password  :" password\par
+         echo " name is $\{name\} and password is $\{password\}\par
+\par
+             #name is sree and password is bla\par
+       ( to hide password without displaying)\par
+       ( -s is silent p is prompt)\par
+             read -sp " enter password "password   \par
+             echo " entered password Is $\{password\}"\par
+       \par
+     (data type will be automatically detected by shell)\par
+       make var readonly -- age=20 \par
+                            readonly age\par
+                            age=10 \par
+            unset var    -- name="sree"\par
+                            echo $name   (sree)\par
+                            unset name\par
+                            echo $name ()\par
+\par
+       \par
+\par
+\par
+   \cf3\b script 3\cf0\b0   --> Automated script to install apps\par
+                   sudo apt update\par
+                   sudo apt install apache2 -y\par
+                   systemctl status apache2\par
+                   systemctl enable apache2\par
+                   systemctl start apache2 (or) \par
+                   systemctl restart apache2\par
+                   systemctl status apache2\par
+\par
+    this same process can be done with the help of variable so that when we want to install other apps it will be easier      \par
+        \par
+\par
+    \b script 4\par
+    \b0\par
+    \b how to pass , get and use argument in shell\par
+\b0\par
+    Whenever you pass an arg from bash script they are stored into a default arg which are like $1 $2 . So the first arg you pass will be stored into the first arg $1 and second on $2 eg \'85\par
+\par
+     echo $1 $2 $3                \par
+     eg  ./file1.sh hello sree)\par
+              # hello sree\par
+\par
+   (you can use arguments to install packages too)\par
+        sudo apt install $1 $2 -y\par
+   To check number of arguments passed as arguments \par
+       echo $#\par
+\highlight2\b Conditional statements:\highlight0\b0\par
+      syntax:\par
+     --------------\par
+         \par
+         if [ condition ]\par
+         then \par
+             stmt\par
+         fi\par
+\par
+      ----------\par
+            if [ condition ]\par
+            then\par
+              stmt\par
+            else\par
+              stmt\par
+            fi\par
+       -----------\par
+        \par
+             if [ condition ]\par
+             then \par
+                stmt\par
+             elif [ exp ]\par
+             then \par
+               stmt\par
+            else\par
+               stmt\par
+            fi\par
+     ----------------\par
+          if [ exp ] then\par
+             if [ exp ] then\par
+                   stmt\par
+             else \par
+                   stmt\par
+             fi\par
+          else\par
+            stmt\par
+          fi\par
+   \par
+\par
+ Operators:\par
+      Arithmetic \par
+      Relational\par
+      Logical\par
+      String \par
+      File test\par
+  Loops:\par
+      for (and types)\par
+      while\par
+      until\par
+  \par
+\par
+Operators \par
+\highlight1 1. Arithmetic Operators \highlight0\par
+Arithmetic operators are special symbols that perform mathematical operations such as addition, subtraction, multiplication, etc. \par
+\tab +    : Addition \par
+\tab -    : Subtraction \par
+\tab *    : Multiplication \par
+\tab /    : Division \par
+\tab %  : Modulus \par
+ ex:-  \par
+\par
+#!/bin/bash \par
+a=10 \par
+b=20 \par
+echo $((a + b))  # Output: 30 \par
+echo $((a - b))  # Output: -10 \par
+echo $((a * b))  # Output: 200 \par
+echo $((b / a))  # Output: 2 \par
+echo $((b % a))  # Output: 0 \par
+\highlight1 2. Relational Operators \highlight0\par
+These operators check the relationship between two operands and returns the true or false. \par
+-eq   : Equal to \par
+-ne   : Not equal to \par
+-gt   : Greater than \par
+-lt   : Less than \par
+-ge   : Greater than or equal to \par
+-le   : Less than or equal to \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+b=20 \par
+if [ $a -eq $b ]; then echo "a is equal to b"; fi \par
+if [ $a -ne $b ]; then echo "a is not equal to b"; fi \par
+if [ $a -gt $b ]; then echo "a is greater than b"; fi \par
+if [ $a -lt $b ]; then echo "a is less than b"; fi \par
+if [ $a -ge $b ]; then echo "a is greater than or equal to b"; fi \par
+if [ $a -le $b ]; then echo "a is less than or equal to b"; fi \par
+ \par
+\highlight1 3. Logical Operators \highlight0\par
+These operators compare two values and return true or false. \par
+\tab   !   : NOT \par
+\tab  -o  : OR \par
+\tab  -a  : AND \par
+\par
+#!/bin/bash \par
+a=10 \par
+b=20 \par
+if [ $a -lt 15 -a $b -gt 15 ]; then echo "Both conditions are true"; fi \par
+if [ $a -lt 15 -o $b -lt 15 ]; then echo "At least one condition is true"; fi \par
+if [ ! $a -ge 15 ]; then echo "Condition is true"; fi \par
+\highlight1 4. String Operators \highlight0\par
+These operators are used to compare strings. \par
+\tab  =   : Equal to \par
+\tab !=   : Not equal to \par
+\tab -z   : String is null,has zero length \par
+     -n  : String is not null \par
+ex:- \par
+#!/bin/bash \par
+str1="Hello" \par
+str2="World" \par
+if [ "$str1" = "$str2" ]; then echo "Strings are equal"; else echo "Strings are not equal"; fi \par
+if [ "$str1" != "$str2" ]; then echo "Strings are not equal"; fi \par
+if [ -z "$str1" ]; then echo "String is empty"; else echo "String is not empty"; fi \par
+if [ -n "$str1" ]; then echo "String is not empty"; fi \par
+ \par
+ \par
+\highlight1 5. File Test Operators \highlight0\par
+These operators are used to test various properties of files. \par
+\tab -e   : File exists \par
+\tab -r    : File is readable \par
+\tab -w   : File is writable \par
+\tab -x    : File is executable \par
+\tab -f    : File is a regular file \par
+\tab -d   : Directory exists \par
+\tab -s    : File is not empty \par
+ex:- \par
+#!/bin/bash \par
+file="example.txt" \par
+if [ -e "$file" ]; then echo "File exists"; fi \par
+if [ -r "$file" ]; then echo "File is readable"; fi \par
+if [ -w "$file" ]; then echo "File is writable"; fi \par
+if [ -x "$file" ]; then echo "File is executable"; fi \par
+if [ -f "$file" ]; then echo "File is a regular file"; fi \par
+if [ -d "$file" ]; then echo "It is a directory"; fi \par
+if [ -s "$file" ]; then echo "File is not empty"; fi \par
+ \par
+\highlight1 Conditional statements  \highlight0\par
+1. if Statement \par
+The if statement executes a block of code if a specified condition is true. \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+if [ $a -gt 5 ]; then \par
+  echo "a is greater than 5" \par
+fi \par
+2. if-else Statement \par
+The if-else statement executes one block of code if a specified condition is true and another block of code if the condition is false. \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+if [ $a -gt 5 ]; then \par
+  echo "a is greater than 5" \par
+else \par
+  echo "a is not greater than 5" \par
+fi \par
+ \par
+3. if-elif-else Statement \par
+The if-elif-else statement executes different blocks of code based on multiple conditions. \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+if [ $a -gt 15 ]; then \par
+  echo "a is greater than 15" \par
+elif [ $a -gt 5 ]; then \par
+  echo "a is greater than 5 but less than or equal to 15" \par
+else \par
+  echo "a is 5 or less" \par
+fi \par
+   \par
+4. Nested if Statements \par
+You can also nest if statements within each other to perform more complex checks. \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+b=20 \par
+if [ $a -gt 5 ]; then \par
+  if [ $b -gt 15 ]; then \par
+    echo "a is greater than 5 and b is greater than 15" \par
+  else \par
+    echo "a is greater than 5 but b is not greater than 15" \par
+  fi \par
+else \par
+  echo "a is not greater than 5" \par
+fi \par
+\b Logical Operators in Conditional Statements \b0\par
+Logical operators are used to combine multiple conditions in a single if statement. \par
+&&  \tab : Logical AND \par
+||    : Logical OR \par
+!     : Logical NOT \par
+ex:- \par
+#!/bin/bash \par
+a=10 \par
+b=20 \par
+ \par
+if [ $a -gt 5 ] && [ $b -gt 15 ]; then \par
+  echo "Both conditions are true" \par
+fi \par
+ \par
+if [ $a -gt 15 ] || [ $b -gt 15 ]; then \par
+  echo "At least one condition is true" \par
+fi \par
+ \par
+\b Loops   \b0\par
+\par
+Loops are used to repeatedly execute a block of commands as long as a certain condition is true. \par
+1. for loop \par
+The for loop iterates over a list of items and executes the specified commands for each item. \par
+i)   Basic for Loop \par
+\par
+\par
+#!/bin/bash \par
+for i in 1 2 3 4 5; do \par
+  echo "Number: $i" \par
+done \par
+\par
+\par
+ii) for Loop with a Range \par
+#!/bin/bash \par
+for i in \{1..5\}; do \par
+  echo "Number: $i" \par
+done \par
+\par
+iii) for Loop with Step Value \par
+#!/bin/bash \par
+for i in \{1..10..3\}; do \par
+  echo "Number: $i" \par
+done \par
+\par
+\par
+iv) for Loop Iterating Over Files \par
+#!/bin/bash \par
+for file in *.txt; do \par
+  echo "<{{\field{\*\fldinst{HYPERLINK "File: $file"}}{\fldrslt{File: $file\ul0\cf0}}}}\f1\fs22 >\f0\fs28 " \par
+done \par
+ \par
+2. while Loop\par
+ \par
+The while loop executes the specified commands as long as the condition is true. \par
+\par
+#!/bin/bash \par
+counter=1 \par
+while [ $counter -le 5 ]; do \par
+  echo "Counter: $counter" \par
+  counter=$((counter+1)) \par
+done \par
+ \par
+3. until Loop \par
+The until loop executes the specified commands until the condition becomes true. \par
+#! /bin/bash \par
+counter=1 \par
+until [ $counter -gt 5 ]; do \par
+  echo "Counter: $counter" \par
+  counter=$((counter+1)) \par
+done \par
+ \par
+Functions \par
+Functions allow you to encapsulate a set of commands, making your scripts reusable. There are two ways to create functions \par
+ \par
+1) first way \par
+function_name () \{  \par
+# commands  \par
+\} \par
+2) second way \par
+ function function_name \{ \par
+# commands  \par
+\} \par
+ \par
+Example:- \par
+\par
+#!/bin/bash  \par
+# Define a function  \par
+greet() \{  \par
+echo "Hello, $1"  \par
+\}  \par
+# Call the function  \par
+greet "World" \par
+\par
+\par
+\par
+Function with multiple arguments: \par
+\par
+\par
+#!/bin/bash \par
+add_numbers() \{ \par
+    local sum=$(($1 + $2)) \par
+    echo "Sum: $sum" \par
+\} \par
+ echo $sum;\par
+add_numbers 5 10 \par
+ echo $sum;\par
+\par
+\par
+Function with a return value: \par
+\par
+\par
+#!/bin/bash \par
+multiply_numbers() \{ \par
+    local product=$(($1 * $2)) \par
+    echo $product \par
+\} \par
+result=$(multiply_numbers 4 5) \par
+echo "Product: $result" \par
+ \par
+ \par
+ \par
+To check the user existence \par
+#! /bin/bash \par
+if id username; then \par
+echo "user exists"\'9d \par
+else  \par
+echo "user doesn't exist"\par
+fi \par
+ \par
+To read a file line by line using a while loop  \par
+while read line;  do \par
+echo "$line" \par
+done < filename \par
+\par
+ \par
+       \par
+ \par
+  \par
+  \par
+  \par
+}
+ 
